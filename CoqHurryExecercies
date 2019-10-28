@@ -1,0 +1,86 @@
+Require Import Bool.
+Require Import Arith.
+Require Import List.
+
+
+Lemma example2 : forall a b:Prop, a /\ b -> b /\ a.
+Proof.
+  intros a b H.
+  split.
+  destruct H as [H1 H2].
+    exact H2.
+  intuition.
+Qed.
+
+Lemma example3: forall A B, A \/ B -> B \/ A.
+Proof.
+  intros a b H.
+  destruct H as [H1 | H2].
+    right; assumption.
+    left; assumption.
+Qed.
+
+Lemma example4: 3 <= 5.
+  apply le_S.
+  apply le_S.
+  apply le_n.
+Qed.
+
+Lemma example5: forall x y, x <= 10 -> 10 <=y -> x <=y.
+  intros x y x10 y10.
+  apply le_trans with (m := 10).
+  assumption.
+  assumption.
+Qed.
+
+SearchRewrite((_ + _) * _).
+
+Lemma example6 : forall x y, (x + y) * (x + y) = x*x + 2*x*y + y*y.
+  intros x y.
+  rewrite mult_plus_distr_l.
+  rewrite mult_plus_distr_r.
+  rewrite mult_plus_distr_r.
+  rewrite plus_assoc.
+  rewrite <- plus_assoc with (n := x * x).
+  rewrite mult_comm with (n:= y) (m:=x).
+  pattern (x * y) at 1; rewrite <- mult_1_l.
+  rewrite <- mult_succ_l.
+  rewrite mult_assoc.
+  reflexivity.
+Qed.
+
+
+
+Lemma e1: forall A B C:Prop, A /\(B/\C) -> (A/\B)/\C.
+    intros.
+    Search (_ /\ (_ /\ _)).
+    apply and_assoc.
+    intuition.
+Qed.
+
+Lemma e2 : forall A B C D: Prop, (A -> B)/\(C -> D)/\A/\C -> B/\D.
+  intros.
+  destruct H as [H1 H2].
+  destruct H2 as [H2 H3].
+  destruct H3 as [H3 H4].
+  split.
+  apply H1.
+  exact H3.
+  apply H2.
+  exact H4.
+Qed.
+
+Lemma e3 : forall A : Prop, ~(A /\ ~A).
+  intros A.
+  intros H.
+  destruct H as [H1 H2].
+  destruct H2.
+  exact H1.
+Qed.
+
+Lemma e4 : forall A B C: Prop, A\/(B\/C)->(A\/B)\/C.
+  intros.
+  destruct  H as [H1 | [H2 | H3]].
+    - left; left; exact H1.
+    - left; right; exact H2.
+    - right; exact H3.
